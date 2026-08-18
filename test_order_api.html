@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Order API</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .test-section { margin: 20px 0; padding: 15px; border: 1px solid #ddd; border-radius: 5px; }
+        button { padding: 10px 15px; margin: 5px; background: #007bff; color: white; border: none; border-radius: 3px; cursor: pointer; }
+        button:hover { background: #0056b3; }
+        .result { margin: 10px 0; padding: 10px; border-radius: 3px; }
+        .success { background: #d4edda; border: 1px solid #c3e6cb; color: #155724; }
+        .error { background: #f8d7da; border: 1px solid #f5c6cb; color: #721c24; }
+        .info { background: #d1ecf1; border: 1px solid #bee5eb; color: #0c5460; }
+    </style>
+</head>
+<body>
+    <h1>🧪 Test Order API Endpoints</h1>
+    
+    <div class="test-section">
+        <h3>1. Test COD Order Creation</h3>
+        <p>Create a test order with Cash on Delivery payment method</p>
+        <button onclick="testCreateCODOrder()">Create COD Order</button>
+        <div id="cod-result"></div>
+    </div>
+    
+    <div class="test-section">
+        <h3>2. Test Razorpay Order Creation</h3>
+        <p>Create a test order with Razorpay payment method</p>
+        <button onclick="testCreateRazorpayOrder()">Create Razorpay Order</button>
+        <div id="razorpay-result"></div>
+    </div>
+    
+    <div class="test-section">
+        <h3>3. Test Get Order Details</h3>
+        <p>Get details of a specific order (enter order ID)</p>
+        <input type="number" id="order-id" placeholder="Enter Order ID" style="padding: 5px; margin: 5px;">
+        <button onclick="testGetOrderDetails()">Get Order Details</button>
+        <div id="get-order-result"></div>
+    </div>
+    
+    <div class="test-section">
+        <h3>4. Test Update Payment Status</h3>
+        <p>Update payment status for an order (enter order ID)</p>
+        <input type="number" id="update-order-id" placeholder="Enter Order ID" style="padding: 5px; margin: 5px;">
+        <button onclick="testUpdatePaymentStatus()">Update Payment Status</button>
+        <div id="update-payment-result"></div>
+    </div>
+
+    <script>
+        const API_BASE = 'http://localhost:8000/api';
+        
+        function showResult(elementId, message, type = 'info') {
+            const element = document.getElementById(elementId);
+            element.innerHTML = `<div class="result ${type}">${message}</div>`;
+        }
+        
+        async function testCreateCODOrder() {
+            const testOrderData = {
+                customer_name: "Test Customer",
+                customer_email: "test@example.com",
+                customer_phone: "9876543210",
+                delivery_address: "123 Test Street",
+                delivery_city: "Test City",
+                delivery_state: "Test State",
+                delivery_pincode: "123456",
+                delivery_country: "India",
+                payment_method: "cod",
+                subtotal: 500.00,
+                shipping_cost: 50.00,
+                total_savings: 50.00,
+                final_total: 500.00,
+                notes: "Test COD order",
+                items: [
+                    {
+                        id: 1,
+                        name: "Test Product 1",
+                        image: "https://example.com/image1.jpg",
+                        quantity: 2,
+                        price: 250.00,
+                        discountPrice: 200.00,
+                        product_price: 250.00
+                    }
+                ]
+            };
+            
+            try {
+                showResult('cod-result', 'Creating COD order...', 'info');
+                
+                const response = await fetch(`${API_BASE}/orders/create/`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(testOrderData)
+                });
+                
+                const result = await response.json();
+                
+                if (response.ok) {
+                    showResult('cod-result', `
+                        <strong>✅ COD Order Created Successfully!</strong><br>
+                        Order ID: ${result.order_id}<br>
+                        Order Number: ${result.order_number}<br>
+                        Payment Status: ${result.payment_status}<br>
+                        Order Status: ${result.order_status}
+                    `, 'success');
+                } else {
+                    showResult('cod-result', `
+                        <strong>❌ Failed to create COD order</strong><br>
+                        Error: ${result.message || 'Unknown error'}<br>
+                        Details: ${JSON.stringify(result.errors || {})}
+                    `, 'error');
+                }
+                
+            } catch (error) {
+                showResult('cod-result', `
+                    <strong>❌ Error creating COD order</strong><br>
+                    ${error.message}
+                `, 'error');
+            }
+        }
+        
+        async function testCreateRazorpayOrder() {
+            const testOrderData = {
+                customer_name: "Test Customer Razorpay",
+                customer_email: "test.razorpay@example.com",
+                customer_phone: "9876543211",
+                delivery_address: "456 Razorpay Street",
+                delivery_city: "Razorpay City",
+                delivery_state: "Razorpay State",
+                delivery_pincode: "654321",
+                delivery_country: "India",
+                payment_method: "razorpay",
+                subtotal: 1000.00,
+                shipping_cost: 100.00,
+                total_savings: 100.00,
+                final_total: 1000.00,
+                notes: "Test Razorpay order",
+                items: [
+                    {
+                        id: 2,
+                        name: "Test Product 2",
+                        image: "https://example.com/image2.jpg",
+                        quantity: 1,
+                        price: 1000.00,
+                        discountPrice: 900.00,
+                        product_price: 1000.00
+                    }
+                ]
+            };
+            
+            try {
+                showResult('razorpay-result', 'Creating Razorpay order...', 'info');
+                
+                const response = await fetch(`${API_BASE}/orders/create/`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(testOrderData)
+                });
+                
+                const result = await response.json();
+                
+                if (response.ok) {
+                    showResult('razorpay-result', `
+                        <strong>✅ Razorpay Order Created Successfully!</strong><br>
+                        Order ID: ${result.order_id}<br>
+                        Order Number: ${result.order_number}<br>
+                        Payment Status: ${result.payment_status}<br>
+                        Order Status: ${result.order_status}
+                    `, 'success');
+                } else {
+                    showResult('razorpay-result', `
+                        <strong>❌ Failed to create Razorpay order</strong><br>
+                        Error: ${result.message || 'Unknown error'}<br>
+                        Details: ${JSON.stringify(result.errors || {})}
+                    `, 'error');
+                }
+                
+            } catch (error) {
+                showResult('razorpay-result', `
+                    <strong>❌ Error creating Razorpay order</strong><br>
+                    ${error.message}
+                `, 'error');
+            }
+        }
+        
+        async function testGetOrderDetails() {
+            const orderId = document.getElementById('order-id').value;
+            if (!orderId) {
+                showResult('get-order-result', 'Please enter an order ID', 'error');
+                return;
+            }
+            
+            try {
+                showResult('get-order-result', 'Fetching order details...', 'info');
+                
+                const response = await fetch(`${API_BASE}/orders/${orderId}/`);
+                const result = await response.json();
+                
+                if (response.ok) {
+                    showResult('get-order-result', `
+                        <strong>✅ Order Details Retrieved!</strong><br>
+                        Order Number: ${result.order_number}<br>
+                        Customer: ${result.customer_name}<br>
+                        Payment Method: ${result.payment_method}<br>
+                        Payment Status: ${result.payment_status}<br>
+                        Order Status: ${result.order_status}<br>
+                        Total: ₹${result.final_total}<br>
+                        Items: ${result.items.length} products
+                    `, 'success');
+                } else {
+                    showResult('get-order-result', `
+                        <strong>❌ Failed to get order details</strong><br>
+                        Error: ${result.message || 'Unknown error'}
+                    `, 'error');
+                }
+                
+            } catch (error) {
+                showResult('get-order-result', `
+                    <strong>❌ Error getting order details</strong><br>
+                    ${error.message}
+                `, 'error');
+            }
+        }
+        
+        async function testUpdatePaymentStatus() {
+            const orderId = document.getElementById('update-order-id').value;
+            if (!orderId) {
+                showResult('update-payment-result', 'Please enter an order ID', 'error');
+                return;
+            }
+            
+            const updateData = {
+                payment_status: 'completed',
+                razorpay_payment_id: 'pay_test123',
+                razorpay_signature: 'test_signature_123'
+            };
+            
+            try {
+                showResult('update-payment-result', 'Updating payment status...', 'info');
+                
+                const response = await fetch(`${API_BASE}/orders/${orderId}/payment-status/`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(updateData)
+                });
+                
+                const result = await response.json();
+                
+                if (response.ok) {
+                    showResult('update-payment-result', `
+                        <strong>✅ Payment Status Updated Successfully!</strong><br>
+                        Order ID: ${result.order_id}<br>
+                        New Payment Status: ${result.payment_status}<br>
+                        New Order Status: ${result.order_status}
+                    `, 'success');
+                } else {
+                    showResult('update-payment-result', `
+                        <strong>❌ Failed to update payment status</strong><br>
+                        Error: ${result.message || 'Unknown error'}<br>
+                        Details: ${JSON.stringify(result.errors || {})}
+                    `, 'error');
+                }
+                
+            } catch (error) {
+                showResult('update-payment-result', `
+                    <strong>❌ Error updating payment status</strong><br>
+                    ${error.message}
+                `, 'error');
+            }
+        }
+    </script>
+</body>
+</html>
+
+
+

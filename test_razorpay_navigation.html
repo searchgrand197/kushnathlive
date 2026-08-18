@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Test Razorpay Navigation</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 40px; }
+        .test-section { margin: 20px 0; padding: 20px; border: 1px solid #ddd; border-radius: 8px; }
+        button { padding: 10px 20px; margin: 10px; background: #007bff; color: white; border: none; border-radius: 4px; cursor: pointer; }
+        button:hover { background: #0056b3; }
+        .data-display { background: #f8f9fa; padding: 15px; border-radius: 4px; margin: 10px 0; }
+    </style>
+</head>
+<body>
+    <h1>Test Razorpay Navigation</h1>
+    
+    <div class="test-section">
+        <h3>Test Data</h3>
+        <div class="data-display">
+            <strong>Amount:</strong> ₹150.00<br>
+            <strong>Customer:</strong> John Doe<br>
+            <strong>Phone:</strong> +91 98765 43210<br>
+            <strong>Email:</strong> john@example.com<br>
+            <strong>Items:</strong> 2 products<br>
+            <strong>Address:</strong> Mumbai, Maharashtra
+        </div>
+    </div>
+
+    <div class="test-section">
+        <h3>Navigation Test</h3>
+        <p>Click the button below to test navigation to the Razorpay payment page:</p>
+        <button onclick="testNavigation()">Navigate to Razorpay Payment</button>
+    </div>
+
+    <div class="test-section">
+        <h3>Instructions</h3>
+        <ol>
+            <li>Make sure your React app is running on port 5174</li>
+            <li>Make sure your Django backend is running on port 8000</li>
+            <li>Click the navigation button above</li>
+            <li>You should be redirected to the Razorpay payment page</li>
+            <li>Test the payment flow</li>
+        </ol>
+    </div>
+
+    <script>
+        function testNavigation() {
+            // Simulate the navigation data that would come from checkout
+            const navigationData = {
+                amount: 150.00,
+                customerName: 'John Doe',
+                customerEmail: 'john@example.com',
+                customerPhone: '+91 98765 43210',
+                orderItems: [
+                    { id: 1, name: 'Ayurvedic Medicine 1', quantity: 1, price: 75.00 },
+                    { id: 2, name: 'Ayurvedic Medicine 2', quantity: 1, price: 75.00 }
+                ],
+                deliveryAddress: {
+                    address: '123 Wellness Street',
+                    city: 'Mumbai',
+                    state: 'Maharashtra',
+                    zipCode: '400001',
+                    country: 'India'
+                },
+                returnTo: '/checkout'
+            };
+
+            // Try to navigate to the React app
+            try {
+                // For testing, we'll show the data that would be passed
+                alert('Navigation data prepared:\n\n' + JSON.stringify(navigationData, null, 2));
+                
+                // In a real scenario, this would navigate to your React app
+                // window.location.href = 'http://localhost:5174/razorpay-payment';
+                
+                console.log('Navigation data:', navigationData);
+            } catch (error) {
+                console.error('Navigation error:', error);
+                alert('Navigation failed: ' + error.message);
+            }
+        }
+
+        // Show current page info
+        console.log('Test page loaded. Current URL:', window.location.href);
+        console.log('To test the full flow:');
+        console.log('1. Open your React app at http://localhost:5174');
+        console.log('2. Navigate to /razorpay-payment with the test data');
+        console.log('3. Test the payment flow');
+    </script>
+</body>
+</html>
+
+
+

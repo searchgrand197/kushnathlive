@@ -1,0 +1,327 @@
+{
+    "info": {
+      "name": "Kushnath Ayurveda - Customer API",
+      "description": "API collection for customer profile management",
+      "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+    },
+    "variable": [
+      {
+        "key": "base_url",
+        "value": "http://localhost:8000",
+        "type": "string"
+      },
+      {
+        "key": "access_token",
+        "value": "your_jwt_access_token_here",
+        "type": "string"
+      }
+    ],
+    "auth": {
+      "type": "bearer",
+      "bearer": [
+        {
+          "key": "token",
+          "value": "{{access_token}}",
+          "type": "string"
+        }
+      ]
+    },
+    "item": [
+      {
+        "name": "Authentication",
+        "item": [
+          {
+            "name": "Get JWT Token",
+            "request": {
+              "method": "POST",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": {
+                "mode": "raw",
+                "raw": "{\n  \"username\": \"your_username\",\n  \"password\": \"your_password\"\n}"
+              },
+              "url": {
+                "raw": "{{base_url}}/api/token/",
+                "host": ["{{base_url}}"],
+                "path": ["api", "token", ""]
+              },
+              "description": "Get JWT access token for authentication"
+            },
+            "response": []
+          },
+          {
+            "name": "Refresh JWT Token",
+            "request": {
+              "method": "POST",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": {
+                "mode": "raw",
+                "raw": "{\n  \"refresh\": \"your_refresh_token_here\"\n}"
+              },
+              "url": {
+                "raw": "{{base_url}}/api/token/refresh/",
+                "host": ["{{base_url}}"],
+                "path": ["api", "token", "refresh", ""]
+              },
+              "description": "Refresh JWT access token using refresh token"
+            },
+            "response": []
+          }
+        ]
+      },
+      {
+        "name": "Customer Profile",
+        "item": [
+          {
+            "name": "Get Customer Profile",
+            "request": {
+              "method": "GET",
+              "header": [
+                {
+                  "key": "Authorization",
+                  "value": "Bearer {{access_token}}"
+                }
+              ],
+              "url": {
+                "raw": "{{base_url}}/api/customer/profile/",
+                "host": ["{{base_url}}"],
+                "path": ["api", "customer", "profile", ""]
+              },
+              "description": "Fetch customer profile data for authenticated user"
+            },
+            "response": [
+              {
+                "name": "Success Response",
+                "originalRequest": {
+                  "method": "GET",
+                  "header": [
+                    {
+                      "key": "Authorization",
+                      "value": "Bearer {{access_token}}"
+                    }
+                  ],
+                  "url": {
+                    "raw": "{{base_url}}/api/customer/profile/",
+                    "host": ["{{base_url}}"],
+                    "path": ["api", "customer", "profile", ""]
+                  }
+                },
+                "status": "OK",
+                "code": 200,
+                "_postman_previewlanguage": "json",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "cookie": [],
+                "body": "{\n  \"success\": true,\n  \"data\": {\n    \"id\": 1,\n    \"name\": \"John Doe\",\n    \"email\": \"john@example.com\",\n    \"mobiles\": [\n      {\n        \"id\": 1,\n        \"mobile\": \"1234567890\"\n      },\n      {\n        \"id\": 2,\n        \"mobile\": \"0987654321\"\n      }\n    ],\n    \"addresses\": [\n      {\n        \"id\": 1,\n        \"address\": \"123 Main Street\",\n        \"pincode\": \"12345\",\n        \"city\": \"New York\",\n        \"state\": \"NY\",\n        \"country\": \"USA\"\n      }\n    ],\n    \"more_addresses\": [\n      {\n        \"id\": 1,\n        \"name\": \"Jane Doe\",\n        \"mobile\": \"5555555555\",\n        \"email\": \"jane@example.com\",\n        \"address\": \"456 Oak Avenue\",\n        \"pincode\": \"54321\",\n        \"city\": \"Los Angeles\",\n        \"state\": \"CA\",\n        \"country\": \"USA\"\n      }\n    ]\n  }\n}"
+              }
+            ]
+          },
+          {
+            "name": "Update Customer Profile - Full Update",
+            "request": {
+              "method": "POST",
+              "header": [
+                {
+                  "key": "Authorization",
+                  "value": "Bearer {{access_token}}"
+                },
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": {
+                "mode": "raw",
+                "raw": "{\n  \"name\": \"John Doe Updated\",\n  \"email\": \"john.updated@example.com\",\n  \"mobiles\": [\n    {\n      \"mobile\": \"1111111111\"\n    },\n    {\n      \"mobile\": \"2222222222\"\n    }\n  ],\n  \"addresses\": [\n    {\n      \"address\": \"789 Pine Street\",\n      \"pincode\": \"67890\",\n      \"city\": \"Chicago\",\n      \"state\": \"IL\",\n      \"country\": \"USA\"\n    },\n    {\n      \"address\": \"321 Elm Street\",\n      \"pincode\": \"13579\",\n      \"city\": \"Houston\",\n      \"state\": \"TX\",\n      \"country\": \"USA\"\n    }\n  ],\n  \"more_addresses\": [\n    {\n      \"name\": \"Jane Smith\",\n      \"mobile\": \"3333333333\",\n      \"email\": \"jane.smith@example.com\",\n      \"address\": \"654 Maple Drive\",\n      \"pincode\": \"24680\",\n      \"city\": \"Phoenix\",\n      \"state\": \"AZ\",\n      \"country\": \"USA\"\n    }\n  ]\n}"
+              },
+              "url": {
+                "raw": "{{base_url}}/api/customer/profile/update/",
+                "host": ["{{base_url}}"],
+                "path": ["api", "customer", "profile", "update", ""]
+              },
+              "description": "Update complete customer profile with all fields"
+            },
+            "response": [
+              {
+                "name": "Success Response",
+                "originalRequest": {
+                  "method": "POST",
+                  "header": [
+                    {
+                      "key": "Authorization",
+                      "value": "Bearer {{access_token}}"
+                    },
+                    {
+                      "key": "Content-Type",
+                      "value": "application/json"
+                    }
+                  ],
+                  "body": {
+                    "mode": "raw",
+                    "raw": "{\n  \"name\": \"John Doe Updated\",\n  \"email\": \"john.updated@example.com\"\n}"
+                  },
+                  "url": {
+                    "raw": "{{base_url}}/api/customer/profile/update/",
+                    "host": ["{{base_url}}"],
+                    "path": ["api", "customer", "profile", "update", ""]
+                  }
+                },
+                "status": "OK",
+                "code": 200,
+                "_postman_previewlanguage": "json",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "cookie": [],
+                "body": "{\n  \"success\": true,\n  \"message\": \"Customer data updated successfully\",\n  \"data\": {\n    \"id\": 1,\n    \"name\": \"John Doe Updated\",\n    \"email\": \"john.updated@example.com\",\n    \"mobiles\": [\n      {\n        \"id\": 3,\n        \"mobile\": \"1111111111\"\n      },\n      {\n        \"id\": 4,\n        \"mobile\": \"2222222222\"\n      }\n    ],\n    \"addresses\": [\n      {\n        \"id\": 2,\n        \"address\": \"789 Pine Street\",\n        \"pincode\": \"67890\",\n        \"city\": \"Chicago\",\n        \"state\": \"IL\",\n        \"country\": \"USA\"\n      },\n      {\n        \"id\": 3,\n        \"address\": \"321 Elm Street\",\n        \"pincode\": \"13579\",\n        \"city\": \"Houston\",\n        \"state\": \"TX\",\n        \"country\": \"USA\"\n      }\n    ],\n    \"more_addresses\": [\n      {\n        \"id\": 2,\n        \"name\": \"Jane Smith\",\n        \"mobile\": \"3333333333\",\n        \"email\": \"jane.smith@example.com\",\n        \"address\": \"654 Maple Drive\",\n        \"pincode\": \"24680\",\n        \"city\": \"Phoenix\",\n        \"state\": \"AZ\",\n        \"country\": \"USA\"\n      }\n    ]\n  }\n}"
+              }
+            ]
+          },
+          {
+            "name": "Update Customer Profile - Partial Update (Name Only)",
+            "request": {
+              "method": "POST",
+              "header": [
+                {
+                  "key": "Authorization",
+                  "value": "Bearer {{access_token}}"
+                },
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": {
+                "mode": "raw",
+                "raw": "{\n  \"name\": \"John Doe New Name\"\n}"
+              },
+              "url": {
+                "raw": "{{base_url}}/api/customer/profile/update/",
+                "host": ["{{base_url}}"],
+                "path": ["api", "customer", "profile", "update", ""]
+              },
+              "description": "Update only the customer name (partial update)"
+            },
+            "response": []
+          },
+          {
+            "name": "Update Customer Profile - Add Mobile Numbers",
+            "request": {
+              "method": "POST",
+              "header": [
+                {
+                  "key": "Authorization",
+                  "value": "Bearer {{access_token}}"
+                },
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": {
+                "mode": "raw",
+                "raw": "{\n  \"mobiles\": [\n    {\n      \"mobile\": \"9999999999\"\n    },\n    {\n      \"mobile\": \"8888888888\"\n    }\n  ]\n}"
+              },
+              "url": {
+                "raw": "{{base_url}}/api/customer/profile/update/",
+                "host": ["{{base_url}}"],
+                "path": ["api", "customer", "profile", "update", ""]
+              },
+              "description": "Update only mobile numbers (replaces existing ones)"
+            },
+            "response": []
+          },
+          {
+            "name": "Update Customer Profile - Add Address",
+            "request": {
+              "method": "POST",
+              "header": [
+                {
+                  "key": "Authorization",
+                  "value": "Bearer {{access_token}}"
+                },
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": {
+                "mode": "raw",
+                "raw": "{\n  \"addresses\": [\n    {\n      \"address\": \"123 New Address Street\",\n      \"pincode\": \"11111\",\n      \"city\": \"Miami\",\n      \"state\": \"FL\",\n      \"country\": \"USA\"\n    }\n  ]\n}"
+              },
+              "url": {
+                "raw": "{{base_url}}/api/customer/profile/update/",
+                "host": ["{{base_url}}"],
+                "path": ["api", "customer", "profile", "update", ""]
+              },
+              "description": "Update only addresses (replaces existing ones)"
+            },
+            "response": []
+          },
+          {
+            "name": "Update Customer Profile - Add More Address",
+            "request": {
+              "method": "POST",
+              "header": [
+                {
+                  "key": "Authorization",
+                  "value": "Bearer {{access_token}}"
+                },
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": {
+                "mode": "raw",
+                "raw": "{\n  \"more_addresses\": [\n    {\n      \"name\": \"Office Address\",\n      \"mobile\": \"7777777777\",\n      \"email\": \"office@example.com\",\n      \"address\": \"456 Business Park\",\n      \"pincode\": \"55555\",\n      \"city\": \"San Francisco\",\n      \"state\": \"CA\",\n      \"country\": \"USA\"\n    }\n  ]\n}"
+              },
+              "url": {
+                "raw": "{{base_url}}/api/customer/profile/update/",
+                "host": ["{{base_url}}"],
+                "path": ["api", "customer", "profile", "update", ""]
+              },
+              "description": "Update only more addresses (replaces existing ones)"
+            },
+            "response": []
+          }
+        ]
+      }
+    ],
+    "event": [
+      {
+        "listen": "prerequest",
+        "script": {
+          "type": "text/javascript",
+          "exec": [
+            ""
+          ]
+        }
+      },
+      {
+        "listen": "test",
+        "script": {
+          "type": "text/javascript",
+          "exec": [
+            ""
+          ]
+        }
+      }
+    ]
+  }

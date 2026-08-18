@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Test Order System</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 40px; background: #f5f5f5; }
+        .test-section { margin: 20px 0; padding: 20px; border: 1px solid #ddd; border-radius: 8px; background: white; }
+        button { padding: 12px 24px; margin: 10px; background: #007bff; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 16px; }
+        button:hover { background: #0056b3; }
+        .result { margin: 10px 0; padding: 10px; border-radius: 4px; }
+        .success { background: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
+        .error { background: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
+        .info { background: #d1ecf1; color: #0c5460; border: 1px solid #bee5eb; }
+        .code { background: #f8f9fa; padding: 10px; border-radius: 4px; font-family: monospace; margin: 10px 0; }
+    </style>
+</head>
+<body>
+    <h1>🧪 Test Order System</h1>
+    
+    <div class="test-section">
+        <h3>New Order Management System</h3>
+        <p>This system now saves all checkout data to Django models and tracks payment status:</p>
+        <ul>
+            <li><strong>CustomerOrder</strong> - Main order information</li>
+            <li><strong>OrderItem</strong> - Individual items in the order</li>
+            <li><strong>PaymentTransaction</strong> - Payment tracking</li>
+        </ul>
+    </div>
+
+    <div class="test-section">
+        <h3>Test 1: Create COD Order</h3>
+        <p>Test creating a Cash on Delivery order:</p>
+        <button onclick="testCreateCODOrder()">Create COD Order</button>
+        <div id="result1" class="result"></div>
+    </div>
+
+    <div class="test-section">
+        <h3>Test 2: Create Razorpay Order</h3>
+        <p>Test creating a Razorpay order:</p>
+        <button onclick="testCreateRazorpayOrder()">Create Razorpay Order</button>
+        <div id="result2" class="result"></div>
+    </div>
+
+    <div class="test-section">
+        <h3>Test 3: Test Payment Page</h3>
+        <p>Test the Razorpay payment page with sample data:</p>
+        <button onclick="testPaymentPage()">Test Payment Page</button>
+        <div id="result3" class="result"></div>
+    </div>
+
+    <div class="test-section">
+        <h3>Test 4: Check Order Details</h3>
+        <p>Test retrieving order details (enter order ID):</p>
+        <input type="number" id="orderIdInput" placeholder="Enter Order ID" style="padding: 8px; margin-right: 10px;">
+        <button onclick="testGetOrderDetails()">Get Order Details</button>
+        <div id="result4" class="result"></div>
+    </div>
+
+    <div class="test-section">
+        <h3>Sample Order Data Structure</h3>
+        <div class="code">
+{
+  "customer_name": "John Doe",
+  "customer_email": "john@example.com",
+  "customer_phone": "+91 98765 43210",
+  "delivery_address": "123 Main Street",
+  "delivery_city": "Mumbai",
+  "delivery_state": "Maharashtra",
+  "delivery_pincode": "400001",
+  "delivery_country": "India",
+  "payment_method": "cod",
+  "subtotal": 150.00,
+  "shipping_cost": 0.00,
+  "total_savings": 20.00,
+  "final_total": 130.00,
+  "notes": "Test order",
+  "items": [
+    {
+      "id": 1,
+      "name": "Test Product",
+      "image": "https://example.com/image.jpg",
+      "quantity": 2,
+      "price": 75.00,
+      "discountPrice": 65.00
+    }
+  ]
+}
+        </div>
+    </div>
+
+    <div class="test-section">
+        <h3>Current Information</h3>
+        <p><strong>Current URL:</strong> <span id="current-url"></span></p>
+        <p><strong>Django Backend:</strong> <span id="django-status">http://localhost:8000</span></p>
+        <p><strong>API Endpoints:</strong></p>
+        <ul>
+            <li><code>/api/orders/create/</code> - Create new order</li>
+            <li><code>/api/orders/{id}/</code> - Get order details</li>
+            <li><code>/api/orders/{id}/payment-status/</code> - Update payment status</li>
+        </ul>
+    </div>
+
+    <script>
+        // Display current information
+        document.getElementById('current-url').textContent = window.location.href;
+
+        async function testCreateCODOrder() {
+            const resultDiv = document.getElementById('result1');
+            try {
+                console.log('🔍 Testing COD order creation...');
+                
+                const orderData = {
+                    customer_name: 'John Doe',
+                    customer_email: 'john@example.com',
+                    customer_phone: '+91 98765 43210',
+                    delivery_address: '123 Main Street, Apartment 4B',
+                    delivery_city: 'Mumbai',
+                    delivery_state: 'Maharashtra',
+                    delivery_pincode: '400001',
+                    delivery_country: 'India',
+                    payment_method: 'cod',
+                    subtotal: 150.00,
+                    shipping_cost: 0.00,
+                    total_savings: 20.00,
+                    final_total: 130.00,
+                    notes: 'Test COD order',
+                    items: [
+                        {
+                            id: 1,
+                            name: 'Test Product 1',
+                            image: 'https://example.com/image1.jpg',
+                            quantity: 2,
+                            price: 75.00,
+                            discountPrice: 65.00
+                        },
+                        {
+                            id: 2,
+                            name: 'Test Product 2',
+                            image: 'https://example.com/image2.jpg',
+                            quantity: 1,
+                            price: 100.00,
+                            discountPrice: 80.00
+                        }
+                    ]
+                };
+                
+                const response = await fetch('http://localhost:8000/api/orders/create/', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(orderData)
+                });
+                
+                if (response.ok) {
+                    const result = await response.json();
+                    console.log('✅ COD order created:', result);
+                    resultDiv.innerHTML = `<div class="success">✅ COD Order created successfully!<br>Order ID: ${result.order_id}<br>Order Number: ${result.order_number}<br>Payment Status: ${result.payment_status}<br>Order Status: ${result.order_status}</div>`;
+                } else {
+                    const errorData = await response.json();
+                    throw new Error(errorData.message || 'Failed to create COD order');
+                }
+                
+            } catch (error) {
+                console.error('❌ COD order creation error:', error);
+                resultDiv.innerHTML = `<div class="error">❌ Failed to create COD order: ${error.message}</div>`;
+            }
+        }
+
+        async function testCreateRazorpayOrder() {
+            const resultDiv = document.getElementById('result2');
+            try {
+                console.log('🔍 Testing Razorpay order creation...');
+                
+                const orderData = {
+                    customer_name: 'Jane Smith',
+                    customer_email: 'jane@example.com',
+                    customer_phone: '+91 98765 43211',
+                    delivery_address: '456 Oak Avenue, Suite 2C',
+                    delivery_city: 'Delhi',
+                    delivery_state: 'Delhi',
+                    delivery_pincode: '110001',
+                    delivery_country: 'India',
+                    payment_method: 'razorpay',
+                    subtotal: 299.99,
+                    shipping_cost: 7.99,
+                    total_savings: 50.00,
+                    final_total: 257.98,
+                    notes: 'Test Razorpay order',
+                    items: [
+                        {
+                            id: 3,
+                            name: 'Premium Product',
+                            image: 'https://example.com/premium.jpg',
+                            quantity: 1,
+                            price: 299.99,
+                            discountPrice: 249.99
+                        }
+                    ]
+                };
+                
+                const response = await fetch('http://localhost:8000/api/orders/create/', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(orderData)
+                });
+                
+                if (response.ok) {
+                    const result = await response.json();
+                    console.log('✅ Razorpay order created:', result);
+                    resultDiv.innerHTML = `<div class="success">✅ Razorpay Order created successfully!<br>Order ID: ${result.order_id}<br>Order Number: ${result.order_number}<br>Payment Status: ${result.payment_status}<br>Order Status: ${result.order_status}</div>`;
+                } else {
+                    const errorData = await response.json();
+                    throw new Error(errorData.message || 'Failed to create Razorpay order');
+                }
+                
+            } catch (error) {
+                console.error('❌ Razorpay order creation error:', error);
+                resultDiv.innerHTML = `<div class="error">❌ Failed to create Razorpay order: ${error.message}</div>`;
+            }
+        }
+
+        function testPaymentPage() {
+            const resultDiv = document.getElementById('result3');
+            try {
+                console.log('🔍 Testing payment page...');
+                
+                const params = new URLSearchParams({
+                    amount: '257.98',
+                    customer_name: 'Jane Smith',
+                    customer_email: 'jane@example.com',
+                    customer_phone: '+91 98765 43211',
+                    delivery_address: '456 Oak Avenue, Suite 2C',
+                    delivery_city: 'Delhi',
+                    delivery_state: 'Delhi',
+                    delivery_pincode: '110001',
+                    order_id: '1',
+                    order_number: 'ORD20241201123456'
+                });
+                
+                const url = `http://localhost:8000/api/rz/payment-page/?${params.toString()}`;
+                console.log('🔍 Testing URL:', url);
+                
+                const newWindow = window.open(url, '_blank');
+                if (newWindow) {
+                    resultDiv.innerHTML = '<div class="success">✅ Payment page opened successfully</div>';
+                    console.log('✅ Payment page opened');
+                } else {
+                    resultDiv.innerHTML = '<div class="error">❌ Failed to open payment page</div>';
+                    console.log('❌ Failed to open payment page');
+                }
+                
+            } catch (error) {
+                resultDiv.innerHTML = '<div class="error">❌ Test failed: ' + error.message + '</div>';
+                console.error('❌ Test error:', error);
+            }
+        }
+
+        async function testGetOrderDetails() {
+            const resultDiv = document.getElementById('result4');
+            const orderId = document.getElementById('orderIdInput').value;
+            
+            if (!orderId) {
+                resultDiv.innerHTML = '<div class="error">❌ Please enter an order ID</div>';
+                return;
+            }
+            
+            try {
+                console.log('🔍 Testing order details retrieval...');
+                
+                const response = await fetch(`http://localhost:8000/api/orders/${orderId}/`);
+                
+                if (response.ok) {
+                    const result = await response.json();
+                    console.log('✅ Order details retrieved:', result);
+                    resultDiv.innerHTML = `<div class="success">✅ Order details retrieved successfully!<br>Order Number: ${result.order.order_number}<br>Customer: ${result.order.customer_name}<br>Payment Status: ${result.order.payment_status}<br>Order Status: ${result.order.order_status}</div>`;
+                } else {
+                    const errorData = await response.json();
+                    throw new Error(errorData.message || 'Failed to retrieve order details');
+                }
+                
+            } catch (error) {
+                console.error('❌ Order details retrieval error:', error);
+                resultDiv.innerHTML = `<div class="error">❌ Failed to retrieve order details: ${error.message}</div>`;
+            }
+        }
+
+        // Auto-run some tests
+        window.addEventListener('load', function() {
+            console.log('🔍 Order system test page loaded');
+            console.log('🔍 Current location:', window.location.href);
+            console.log('🔍 To test the order system, click the buttons above');
+        });
+    </script>
+</body>
+</html>
+
+
+

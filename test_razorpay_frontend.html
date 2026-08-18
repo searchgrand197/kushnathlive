@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Test Razorpay Frontend-Backend Connection</title>
+    <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+</head>
+<body>
+    <h2>Test Razorpay Frontend-Backend Connection</h2>
+    
+    <div>
+        <h3>Step 1: Test Backend Connection</h3>
+        <button onclick="testBackendConnection()">Test Backend API</button>
+        <div id="backend-status"></div>
+    </div>
+
+    <div>
+        <h3>Step 2: Create Razorpay Order</h3>
+        <button onclick="createOrder()">Create Order (₹5)</button>
+        <div id="order-status"></div>
+    </div>
+
+    <div>
+        <h3>Step 3: Test Razorpay Payment</h3>
+        <button onclick="testPayment()" id="payment-btn" disabled>Test Payment</button>
+        <div id="payment-status"></div>
+    </div>
+
+    <script>
+        let currentOrder = null;
+
+        async function testBackendConnection() {
+            const statusDiv = document.getElementById('backend-status');
+            try {
+                const response = await fetch('http://localhost:8000/api/rz/config/');
+                if (response.ok) {
+                    const data = await response.json();
+                    statusDiv.innerHTML = `
+                        <div style="color: green; margin: 10px 0;">
+                            ✅ Backend connected successfully!<br>
+                            Key ID: ${data.key_id}<br>
+                            Mode: ${data.mode}<br>
+                            Environment: ${data.environment}
+                        </div>
+                    `;
+                } else {
+                    throw new Error(`HTTP ${response.status}`);
+                }
+            } catch (error) {
+                statusDiv.innerHTML = `
+                    <div style="color: red; margin: 10px 0;">
+                        ❌ Backend connection failed: ${error.message}<br>
+                        Make sure Django server is running on port 8000
+                    </div>
+                `;
+            }
+        }
+
+        async function createOrder() {
+            const statusDiv = document.getElementById('order-status');
+            try {
+                const response = await fetch('http://localhost:8000/api/rz/orderid/', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        amount: 100.00,
+                        currency: 'INR',
+                        receipt: `test_order_${Date.now()}`
+                    })
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+                    currentOrder = data;
+                    statusDiv.innerHTML = `
+                        <div style="color: green; margin: 10px 0;">
+                            ✅ Order created successfully!<br>
+                            Order ID: ${data.order_id}<br>
+                            Amount: ₹${(data.amount / 100).toFixed(2)}<br>
+                            Status: ${data.status}
+                        </div>
+                    `;
+                    document.getElementById('payment-btn').disabled = false;
+                } else {
+                    const errorData = await response.json();
+                    throw new Error(errorData.error || `HTTP ${response.status}`);
+                }
+            } catch (error) {
+                statusDiv.innerHTML = `
+                    <div style="color: red; margin: 10px 0;">
+                        ❌ Order creation failed: ${error.message}
+                    </div>
+                `;
+            }
+        }
+
+        function testPayment() {
+            if (!currentOrder) {
+                alert('Please create an order first');
+                return;
+            }
+
+            const options = {
+                key: currentOrder.key_id,
+                amount: currentOrder.amount,
+                currency: currentOrder.currency,
+                name: 'Kushnath Ayurveda',
+                description: 'Test Payment',
+                order_id: currentOrder.order_id,
+                handler: function (response) {
+                    document.getElementById('payment-status').innerHTML = `
+                        <div style="color: green; margin: 10px 0;">
+                            ✅ Payment successful!<br>
+                            Payment ID: ${response.razorpay_payment_id}<br>
+                            Order ID: ${response.razorpay_order_id}
+                        </div>
+                    `;
+                },
+                prefill: {
+                    name: 'Test User',
+                    email: 'test@example.com',
+                    contact: '9999999999'
+                },
+                theme: {
+                    color: '#3399cc'
+                }
+            };
+
+            const rzp = new Razorpay(options);
+            rzp.open();
+        }
+    </script>
+</body>
+</html>

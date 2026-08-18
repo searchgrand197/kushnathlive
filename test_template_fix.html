@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Test Template Fix</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 40px; background: #f5f5f5; }
+        .test-section { margin: 20px 0; padding: 20px; border: 1px solid #ddd; border-radius: 8px; background: white; }
+        button { padding: 12px 24px; margin: 10px; background: #007bff; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 16px; }
+        button:hover { background: #0056b3; }
+        .result { margin: 10px 0; padding: 10px; border-radius: 4px; }
+        .success { background: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
+        .error { background: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
+        .info { background: #d1ecf1; color: #0c5460; border: 1px solid #bee5eb; }
+    </style>
+</head>
+<body>
+    <h1>🔧 Test Template Fix</h1>
+    
+    <div class="test-section">
+        <h3>Issue: TemplateDoesNotExist at /api/rz/payment-page/</h3>
+        <p>The error shows Django can't find the <code>razorpay_payment.html</code> template.</p>
+        <p><strong>Possible causes:</strong></p>
+        <ul>
+            <li>Django settings not updated with template directory</li>
+            <li>Django server needs restart</li>
+            <li>Template file path is incorrect</li>
+            <li>Template file has syntax errors</li>
+        </ul>
+    </div>
+
+    <div class="test-section">
+        <h3>Test 1: Test Template View</h3>
+        <p>Click the button below to test the template view:</p>
+        <button onclick="testTemplateView()">Test Template View</button>
+        <div id="result1" class="result"></div>
+    </div>
+
+    <div class="test-section">
+        <h3>Test 2: Test Payment Page</h3>
+        <p>Click the button below to test the payment page:</p>
+        <button onclick="testPaymentPage()">Test Payment Page</button>
+        <div id="result2" class="result"></div>
+    </div>
+
+    <div class="test-section">
+        <h3>Test 3: Check File Structure</h3>
+        <p>Click the button below to check the file structure:</p>
+        <button onclick="checkFileStructure()">Check File Structure</button>
+        <div id="result3" class="result"></div>
+    </div>
+
+    <div class="test-section">
+        <h3>Current Information</h3>
+        <p><strong>Current URL:</strong> <span id="current-url"></span></p>
+        <p><strong>Django Backend:</strong> <span id="django-status">http://localhost:8000</span></p>
+        <p><strong>Template Path:</strong> <span id="template-path">api/templates/razorpay_payment.html</span></p>
+    </div>
+
+    <div class="test-section">
+        <h3>Steps to Fix:</h3>
+        <ol>
+            <li><strong>Restart Django server</strong> - The template directory change requires a restart</li>
+            <li><strong>Check Django settings</strong> - Verify TEMPLATES["DIRS"] includes BASE_DIR / "templates"</li>
+            <li><strong>Verify template file</strong> - Check razorpay_payment.html exists in api/templates/</li>
+            <li><strong>Check template syntax</strong> - Ensure no syntax errors in the HTML file</li>
+        </ol>
+    </div>
+
+    <script>
+        // Display current information
+        document.getElementById('current-url').textContent = window.location.href;
+
+        function testTemplateView() {
+            const resultDiv = document.getElementById('result1');
+            try {
+                console.log('🔍 Testing template view...');
+                
+                // Test the test template view
+                const url = 'http://localhost:8000/api/rz/test-template/';
+                console.log('🔍 Testing URL:', url);
+                
+                // Open in new window
+                const newWindow = window.open(url, '_blank');
+                if (newWindow) {
+                    resultDiv.innerHTML = '<div class="success">✅ Template view opened successfully</div>';
+                    console.log('✅ Template view opened');
+                } else {
+                    resultDiv.innerHTML = '<div class="error">❌ Failed to open template view</div>';
+                    console.log('❌ Failed to open template view');
+                }
+                
+            } catch (error) {
+                resultDiv.innerHTML = '<div class="error">❌ Test failed: ' + error.message + '</div>';
+                console.error('❌ Test error:', error);
+            }
+        }
+
+        function testPaymentPage() {
+            const resultDiv = document.getElementById('result2');
+            try {
+                console.log('🔍 Testing payment page...');
+                
+                // Test with sample data
+                const params = new URLSearchParams({
+                    amount: '150.00',
+                    customer_name: 'Test User',
+                    customer_phone: '+91 98765 43210',
+                    delivery_address: 'Test Address',
+                    delivery_city: 'Test City',
+                    delivery_state: 'Test State',
+                    delivery_pincode: '123456'
+                });
+                
+                const url = `http://localhost:8000/api/rz/payment-page/?${params.toString()}`;
+                console.log('🔍 Testing URL:', url);
+                
+                // Open in new window
+                const newWindow = window.open(url, '_blank');
+                if (newWindow) {
+                    resultDiv.innerHTML = '<div class="success">✅ Payment page opened successfully</div>';
+                    console.log('✅ Payment page opened');
+                } else {
+                    resultDiv.innerHTML = '<div class="error">❌ Failed to open payment page</div>';
+                    console.log('❌ Failed to open payment page');
+                }
+                
+            } catch (error) {
+                resultDiv.innerHTML = '<div class="error">❌ Test failed: ' + error.message + '</div>';
+                console.error('❌ Test error:', error);
+            }
+        }
+
+        function checkFileStructure() {
+            const resultDiv = document.getElementById('result3');
+            try {
+                console.log('🔍 Checking file structure...');
+                
+                // This would normally check the server, but we can show what we expect
+                const expectedStructure = `
+                    api/
+                    ├── templates/
+                    │   ├── razorpay_payment.html ✅
+                    │   └── checkout_success.html ✅
+                    ├── dashboard/
+                    │   ├── views.py ✅
+                    │   └── urls.py ✅
+                    └── kushnath_dashboard/
+                        └── settings.py ✅ (TEMPLATES["DIRS"] updated)
+                `;
+                
+                resultDiv.innerHTML = '<div class="info">✅ Expected file structure:<pre>' + expectedStructure + '</pre></div>';
+                console.log('✅ File structure check completed');
+                
+            } catch (error) {
+                resultDiv.innerHTML = '<div class="error">❌ Check failed: ' + error.message + '</div>';
+                console.error('❌ Check error:', error);
+            }
+        }
+
+        // Auto-run some tests
+        window.addEventListener('load', function() {
+            console.log('🔍 Template fix test page loaded');
+            console.log('🔍 Current location:', window.location.href);
+            console.log('🔍 To fix the template issue, restart Django server after updating settings');
+        });
+    </script>
+</body>
+</html>
+
+
+

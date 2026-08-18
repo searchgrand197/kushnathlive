@@ -1,0 +1,20 @@
+User-agent: *
+Allow: /
+
+# Sitemap
+Sitemap: https://www.kushnathayurveda.com/sitemap.xml
+
+# Crawl-delay for respectful crawling
+Crawl-delay: 1
+
+# Allow all search engines to index all content
+Disallow: /api/
+Disallow: /admin/
+Disallow: /private/
+
+# Allow access to media files
+Allow: /media/
+
+# Allow access to static assets
+Allow: /assets/
+Allow: /static/
